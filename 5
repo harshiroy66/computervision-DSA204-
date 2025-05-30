@@ -1,0 +1,43 @@
+import cv2Add commentMore actions
+import numpy as np
+from google.colab.patches import cv2_imshow  # For Colab display
+from google.colab import files
+
+# Upload image
+uploaded = files.upload()
+filename = next(iter(uploaded))
+
+# Read image
+image = cv2.imread(filename)
+
+# Get image dimensions
+(h, w) = image.shape[:2]
+center = (w // 2, h // 2)
+
+# Rotation angles
+angle_cw = -45   # Clockwise rotation (negative angle)
+angle_ccw = 45   # Counter-clockwise rotation (positive angle)
+
+# Rotation matrix for clockwise
+M_cw = cv2.getRotationMatrix2D(center, angle_cw, 1.0)
+
+# Rotation matrix for counter-clockwise
+M_ccw = cv2.getRotationMatrix2D(center, angle_ccw, 1.0)
+
+# Perform the rotations
+rotated_cw = cv2.warpAffine(image, M_cw, (w, h))
+rotated_ccw = cv2.warpAffine(image, M_ccw, (w, h))
+
+# Show images
+print("Original Image:")
+cv2_imshow(image)
+
+print("Rotated Clockwise (45 degrees):")
+cv2_imshow(rotated_cw)
+
+print("Rotated Counter-clockwise (45 degrees):")
+cv2_imshow(rotated_ccw)
+
+# Save results
+cv2.imwrite('rotated_cw.jpg', rotated_cw)
+cv2.imwrite('rotated_ccw.jpg', rotated_ccw)
