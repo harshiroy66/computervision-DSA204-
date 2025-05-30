@@ -1,0 +1,35 @@
+import cv2Add commentMore actions
+from google.colab.patches import cv2_imshow  # Use only in Colab
+from google.colab import files
+
+# Upload image (skip if running locally and already have the image)
+uploaded = files.upload()
+
+filename = next(iter(uploaded))
+
+# Read the image
+image = cv2.imread(filename)
+
+# Scaling factors
+scale_up = 1.5   # 150% bigger
+scale_down = 0.5 # 50% smaller
+
+# Resize image bigger
+bigger = cv2.resize(image, None, fx=scale_up, fy=scale_up, interpolation=cv2.INTER_LINEAR)
+
+# Resize image smaller
+smaller = cv2.resize(image, None, fx=scale_down, fy=scale_down, interpolation=cv2.INTER_AREA)
+
+# Show images (use cv2.imshow() if running locally)
+print("Original Image:")
+cv2_imshow(image)
+
+print("Bigger Image:")
+cv2_imshow(bigger)
+
+print("Smaller Image:")
+cv2_imshow(smaller)
+
+# Save resized images
+cv2.imwrite('bigger_image.jpg', bigger)
+cv2.imwrite('smaller_image.jpg', smaller)
