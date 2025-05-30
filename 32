@@ -1,0 +1,44 @@
+import cv2Add commentMore actions
+import numpy as np
+from google.colab.patches import cv2_imshow
+from google.colab import files
+
+# Upload image
+uploaded = files.upload()
+image_path = next(iter(uploaded))
+
+# Load class labels MobileNet SSD is trained on
+classNames = {15: 'person', 27: 'backpack', 29: 'handbag', 72: 'tvmonitor', 77: 'cell phone', 62: 'chair', 67: 'dining table'}
+
+# Load pre-trained MobileNet SSD model and config files
+net = cv2.dnn.readNetFromCaffe(
+    'MobileNetSSD_deploy.prototxt.txt',  # Download this from OpenCV github or online
+    'MobileNetSSD_deploy.caffemodel'    # Download this from OpenCV github or online
+)
+
+# Read image
+img = cv2.imread(image_path)
+(h, w) = img.shape[:2]
+
+# Prepare blob for DNN input
+blob = cv2.dnn.blobFromImage(cv2.resize(img, (300, 300)), 0.007843, (300, 300), 127.5)
+net.setInput(blob)
+
+# Forward pass to get detections
+detections = net.forward()
+
+# Loop over detections and filter watch-like objects (e.g., "handbag", "backpack", "cell phone")
+for i in range(detections.shape[2]):
+    confidence = detections[0, 0, i, 2]
+    if confidence > 0.5:
+        class_id = int(detections[0, 0, i, 1])
+        label = classNames.get(class_id, None)
+        if label in ['handbag', 'cell phone']:  # Might include watches under these classes (approximate)
+            box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
+            (startX, startY, endX, endY) = box.astype("int")
+            cv2.rectangle(img, (startX, startY), (endX, endY), (0, 255, 0), 2)
+            cv2.putText(img, f"{label}: {confidence:.2f}", (startX, startY - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
+# Show result
+cv2_imshow(img)
