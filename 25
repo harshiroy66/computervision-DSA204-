@@ -1,0 +1,37 @@
+mport cv2Add commentMore actions
+from google.colab.patches import cv2_imshow
+from google.colab import files
+import numpy as np
+
+# Upload image
+uploaded = files.upload()
+filename = next(iter(uploaded))
+
+# Read image in grayscale
+img = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
+
+# Sobel kernels for x and y directions
+sobel_x = np.array([[-1, 0, 1],
+                    [-2, 0, 2],
+                    [-1, 0, 1]], dtype=np.float32)
+
+sobel_y = np.array([[-1, -2, -1],
+                    [0,  0,  0],
+                    [1,  2,  1]], dtype=np.float32)
+
+# Apply convolution with Sobel kernels
+grad_x = cv2.filter2D(img, cv2.CV_64F, sobel_x)
+grad_y = cv2.filter2D(img, cv2.CV_64F, sobel_y)
+
+# Compute gradient magnitude (boundary strength)
+gradient_magnitude = cv2.magnitude(grad_x, grad_y)
+
+# Convert to 8-bit image for display
+boundary_img = cv2.convertScaleAbs(gradient_magnitude)
+
+# Display images
+print("Original Image:")
+cv2_imshow(img)
+
+print("Boundary Image using Sobel Kernel:")
+cv2_imshow(boundary_img)
