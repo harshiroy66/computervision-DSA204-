@@ -1,0 +1,32 @@
+import cv2Add commentMore actions
+from google.colab.patches import cv2_imshow
+from google.colab import files
+import numpy as np
+
+# Upload image
+uploaded = files.upload()
+filename = next(iter(uploaded))
+
+# Read the image
+img = cv2.imread(filename, cv2.IMREAD_COLOR)
+
+# Convert to grayscale
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# Define Laplacian kernel with negative center coefficient for sharpening
+laplacian_kernel = np.array([[0, -1, 0],
+                             [-1, 4, -1],
+                             [0, -1, 0]])
+
+# Apply filter2D using the Laplacian kernel
+laplacian = cv2.filter2D(gray, cv2.CV_64F, laplacian_kernel)
+
+# Sharpen image by subtracting Laplacian from the original grayscale image
+sharpened = cv2.convertScaleAbs(gray - laplacian)
+
+# Show images
+print("Original Grayscale Image:")
+cv2_imshow(gray)
+
+print("Sharpened Image (Laplacian with negative center coefficient):")
+cv2_imshow(sharpened)
