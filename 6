@@ -1,0 +1,31 @@
+import cv2Add commentMore actions
+import numpy as np
+from google.colab.patches import cv2_imshow  # For Google Colab
+from google.colab import files
+
+# Upload the image
+uploaded = files.upload()
+filename = next(iter(uploaded))
+
+# Read the image
+image = cv2.imread(filename)
+
+# Define translation distances (shift)
+tx, ty = 100, 50  # Move right by 100 pixels and down by 50 pixels
+
+# Create translation matrix
+M = np.float32([[1, 0, tx],
+                [0, 1, ty]])
+
+# Apply the translation to the image
+shifted = cv2.warpAffine(image, M, (image.shape[1], image.shape[0]))
+
+# Show images
+print("Original Image:")
+cv2_imshow(image)
+
+print(f"Image moved by tx={tx}, ty={ty}:")
+cv2_imshow(shifted)
+
+# Save the shifted image
+cv2.imwrite('translated_image.jpg', shifted)
