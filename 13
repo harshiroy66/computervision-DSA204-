@@ -1,0 +1,26 @@
+import cv2Add commentMore actions
+from google.colab.patches import cv2_imshow
+from google.colab import files
+
+# Upload an image
+uploaded = files.upload()
+filename = next(iter(uploaded))
+
+# Read the image
+img = cv2.imread(filename, cv2.IMREAD_COLOR)
+
+# Convert image to grayscale
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# Apply Sobel operator along X axis (dx=1, dy=0)
+sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=3)
+
+# Convert back to uint8
+abs_sobelx = cv2.convertScaleAbs(sobelx)
+
+# Show original and Sobel X edge image
+print("Original Image:")
+cv2_imshow(img)
+
+print("Sobel Edge Detection (X axis):")
+cv2_imshow(abs_sobelx)
