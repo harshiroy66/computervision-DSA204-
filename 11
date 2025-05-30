@@ -1,0 +1,57 @@
+import numpy as npAdd commentMore actions
+
+def normalize_points(points):
+    """
+    Normalize points for better numerical stability.
+    Returns normalized points and transformation matrix T.
+    """
+    centroid = np.mean(points, axis=0)
+    shifted = points - centroid
+    scale = np.sqrt(2) / np.mean(np.linalg.norm(shifted, axis=1))
+    T = np.array([[scale, 0, -scale*centroid[0]],
+                  [0, scale, -scale*centroid[1]],
+                  [0, 0, 1]])
+    points_homog = np.hstack([points, np.ones((points.shape[0], 1))])
+    normalized = (T @ points_homog.T).T
+    return normalized[:, :2], T
+
+def DLT_homography(src_pts, dst_pts):
+    """
+    Computes homography H such that dst_pts ~ H * src_pts using DLT algorithm.
+    src_pts, dst_pts are Nx2 arrays of corresponding points.
+    """
+    # Normalize points
+    src_norm, T_src = normalize_points(src_pts)
+    dst_norm, T_dst = normalize_points(dst_pts)
+    
+    N = src_pts.shape[0]
+    A = []
+
+    for i in range(N):
+        x, y = src_norm[i]
+        u, v = dst_norm[i]
+
+        A.append([-x, -y, -1, 0, 0, 0, u*x, u*y, u])
+        A.append([0, 0, 0, -x, -y, -1, v*x, v*y, v])
+
+    A = np.array(A)
+
+    # Solve Ah=0 using SVD
+    U, S, Vt = np.linalg.svd(A)
+    h = Vt[-1, :]  # last row of V^T (smallest singular value)
+    H_norm = h.reshape(3, 3)
+
+    # Denormalize
+    H = np.linalg.inv(T_dst) @ H_norm @ T_src
+
+    # Normalize so that H[2,2] = 1
+    H /= H[2, 2]
+
+    return H
+
+# Example usage:
+src_points = np.array([[100, 100], [200, 100], [200, 200], [100, 200]])
+dst_points = np.array([[80, 120], [220, 80], [210, 210], [90, 250]])
+
+H = DLT_homography(src_points, dst_points)
+print("Estimated Homography matrix:\n", H)
