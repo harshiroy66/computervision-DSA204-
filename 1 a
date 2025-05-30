@@ -1,0 +1,19 @@
+import cv2Add commentMore actions
+from google.colab.patches import cv2_imshow
+from google.colab import files
+
+# Upload image manually
+uploaded = files.upload()  # Choose the image file when prompted
+
+# Get the uploaded file name
+filename = next(iter(uploaded))
+
+# Read and convert to grayscale
+image = cv2.imread(filename)
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# Show the grayscale image
+cv2_imshow(gray)
+
+# Save the grayscale image
+cv2.imwrite('grayscale_output.jpg', gray)
