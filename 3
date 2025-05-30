@@ -1,0 +1,35 @@
+import cv2Add commentMore actions
+
+# Open webcam (0 is default camera)
+cap = cv2.VideoCapture(0)
+
+# Ask user for playback speed
+mode = input("Enter mode (normal / slow / fast): ").strip().lower()
+
+# Set delay between frames based on mode
+if mode == 'normal':
+    delay = 25   # approx 40 FPS
+elif mode == 'slow':
+    delay = 100  # slower motion
+elif mode == 'fast':
+    delay = 5    # faster motion
+else:
+    print("Invalid mode. Using normal.")
+    delay = 25
+
+# Capture and display video
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        print("Failed to grab frame.")
+        break
+
+    cv2.imshow("Webcam Video", frame)
+
+    # Exit on 'q' key
+    if cv2.waitKey(delay) & 0xFF == ord('q'):
+        break
+
+# Release the camera and close the window
+cap.release()
+cv2.destroyAllWindows()
