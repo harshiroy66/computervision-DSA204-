@@ -1,0 +1,24 @@
+import cv2Add commentMore actions
+from google.colab.patches import cv2_imshow
+from google.colab import files
+import numpy as np
+
+# Upload image
+uploaded = files.upload()
+filename = next(iter(uploaded))
+
+# Read image in grayscale
+img = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
+
+# Define kernel (structuring element)
+kernel = np.ones((5,5), np.uint8)
+
+# Apply Closing (dilation followed by erosion)
+closed_img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel)
+
+# Show images
+print("Original Image:")
+cv2_imshow(img)
+
+print("Image after Closing:")
+cv2_imshow(closed_img)
