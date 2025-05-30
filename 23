@@ -1,0 +1,32 @@
+import cv2Add commentMore actions
+from google.colab.patches import cv2_imshow
+from google.colab import files
+
+# Upload source image (to crop from)
+print("Upload source image:")
+uploaded_src = files.upload()
+src_filename = next(iter(uploaded_src))
+src_img = cv2.imread(src_filename)
+
+# Upload destination image (to paste into)
+print("Upload destination image:")
+uploaded_dst = files.upload()
+dst_filename = next(iter(uploaded_dst))
+dst_img = cv2.imread(dst_filename)
+
+# Crop region from source image (e.g., rectangle from (x1,y1) to (x2,y2))
+x1, y1, x2, y2 = 50, 50, 200, 200
+cropped = src_img[y1:y2, x1:x2]
+
+# Define top-left corner where cropped image will be pasted on destination image
+paste_x, paste_y = 100, 100
+
+# Paste cropped image onto destination image
+dst_img[paste_y:paste_y + (y2 - y1), paste_x:paste_x + (x2 - x1)] = cropped
+
+# Show results
+print("Cropped region from source image:")
+cv2_imshow(cropped)
+
+print("Destination image after pasting cropped region:")
+cv2_imshow(dst_img)
