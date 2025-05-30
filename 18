@@ -1,0 +1,29 @@
+import cv2Add commentMore actions
+from google.colab.patches import cv2_imshow
+from google.colab import files
+import numpy as np
+
+# Upload image
+uploaded = files.upload()
+filename = next(iter(uploaded))
+
+# Read image in grayscale
+img = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
+
+# Define sharpening kernel with positive center coefficient
+sharpening_kernel = np.array([[0, -1, 0],
+                              [-1, 5, -1],
+                              [0, -1, 0]])
+
+# Apply filter2D using the sharpening kernel
+sharpened = cv2.filter2D(img, cv2.CV_64F, sharpening_kernel)
+
+# Convert to uint8
+sharpened = cv2.convertScaleAbs(sharpened)
+
+# Show images
+print("Original Grayscale Image:")
+cv2_imshow(img)
+
+print("Sharpened Image (Laplacian mask with positive center coefficient):")
+cv2_imshow(sharpened)
