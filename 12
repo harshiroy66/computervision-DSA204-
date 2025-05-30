@@ -1,0 +1,23 @@
+import cv2Add commentMore actions
+from google.colab.patches import cv2_imshow
+from google.colab import files
+
+# Upload an image
+uploaded = files.upload()
+filename = next(iter(uploaded))
+
+# Read the image
+img = cv2.imread(filename, cv2.IMREAD_COLOR)
+
+# Convert image to grayscale (Canny needs grayscale)
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# Perform Canny edge detection
+edges = cv2.Canny(gray, threshold1=100, threshold2=200)
+
+# Show the original image and edge detected image
+print("Original Image:")
+cv2_imshow(img)
+
+print("Canny Edge Detection:")
+cv2_imshow(edges)
