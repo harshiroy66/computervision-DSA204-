@@ -1,0 +1,27 @@
+import cv2Add commentMore actions
+from google.colab import files
+from google.colab.patches import cv2_imshow
+import time
+
+# Step 1: Upload a video
+uploaded = files.upload()
+filename = next(iter(uploaded))
+
+# Step 2: Open the video
+cap = cv2.VideoCapture(filename)
+
+# Step 3: Choose speed
+speed = input("Enter mode (normal / slow / fast): ").strip().lower()
+delay = {'normal': 0.04, 'slow': 0.1, 'fast': 0.01}.get(speed, 0.04)
+
+# Step 4: Display frames (in Colab)
+frame_count = 0
+while cap.isOpened() and frame_count < 100:  # limit to 100 frames in Colab
+    ret, frame = cap.read()
+    if not ret:
+        break
+    cv2_imshow(frame)
+    time.sleep(delay)
+    frame_count += 1
+
+cap.release()
