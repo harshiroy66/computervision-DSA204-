@@ -1,0 +1,35 @@
+import cv2Add commentMore actions
+import numpy as np
+from google.colab.patches import cv2_imshow
+from google.colab import files
+
+# Upload image
+uploaded = files.upload()
+filename = next(iter(uploaded))
+
+# Read the image
+img = cv2.imread(filename)
+
+rows, cols, ch = img.shape
+
+# Define 3 points in the original image
+pts1 = np.float32([[50, 50], [200, 50], [50, 200]])
+
+# Define 3 points in the output image (where you want pts1 to move)
+pts2 = np.float32([[10, 100], [200, 50], [100, 250]])
+
+# Get the affine transform matrix
+M = cv2.getAffineTransform(pts1, pts2)
+
+# Apply affine transformation
+dst = cv2.warpAffine(img, M, (cols, rows))
+
+# Show images
+print("Original Image:")
+cv2_imshow(img)
+
+print("Affine Transformed Image:")
+cv2_imshow(dst)
+
+# Save the output
+cv2.imwrite('affine_transformed.jpg', dst)
