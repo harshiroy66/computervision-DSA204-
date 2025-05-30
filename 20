@@ -1,0 +1,30 @@
+import cv2Add commentMore actions
+from google.colab.patches import cv2_imshow
+from google.colab import files
+import numpy as np
+
+# Upload image
+uploaded = files.upload()
+filename = next(iter(uploaded))
+
+# Read image in grayscale
+img = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
+
+# Blur the image using GaussianBlur
+blurred = cv2.GaussianBlur(img, (7, 7), 1.5)
+
+# High-Boost Filtering parameters
+A = 1.8  # Boost factor (A > 1 for high-boost)
+
+# Compute high-boost image
+high_boost = cv2.addWeighted(img, A, blurred, -(A - 1), 0)
+
+# Convert to uint8 if necessary
+high_boost = cv2.convertScaleAbs(high_boost)
+
+# Show images
+print("Original Image:")
+cv2_imshow(img)
+
+print("High-Boost Sharpened Image:")
+cv2_imshow(high_boost)
