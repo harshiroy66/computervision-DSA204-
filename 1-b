@@ -1,0 +1,21 @@
+import cv2Add commentMore actions
+from google.colab.patches import cv2_imshow
+from google.colab import files
+
+# Upload the image manually
+uploaded = files.upload()
+
+# Get the filename
+filename = next(iter(uploaded))
+
+# Read the image
+image = cv2.imread(filename)
+
+# Apply Gaussian Blur (kernel size 5x5)
+blurred = cv2.GaussianBlur(image, (5, 5), 0)
+
+# Show the blurred image
+cv2_imshow(blurred)
+
+# Save the result
+cv2.imwrite('blurred_output.jpg', blurred)
