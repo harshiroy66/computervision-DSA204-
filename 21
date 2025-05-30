@@ -1,0 +1,33 @@
+import cv2Add commentMore actions
+from google.colab.patches import cv2_imshow
+from google.colab import files
+import numpy as np
+
+# Upload image
+uploaded = files.upload()
+filename = next(iter(uploaded))
+
+# Read image in grayscale
+img = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
+
+# Calculate gradients along X and Y axes using Sobel
+grad_x = cv2.Sobel(img, cv2.CV_64F, 1, 0, ksize=3)
+grad_y = cv2.Sobel(img, cv2.CV_64F, 0, 1, ksize=3)
+
+# Calculate gradient magnitude (edge strength)
+gradient = cv2.magnitude(grad_x, grad_y)
+
+# Convert gradient to 8-bit for adding
+gradient = cv2.convertScaleAbs(gradient)
+
+# Sharpen image by adding weighted gradient mask
+alpha = 1.0  # weight for original image
+beta = 1.0   # weight for gradient (edge) mask
+sharpened = cv2.addWeighted(img, alpha, gradient, beta, 0)
+
+# Display images
+print("Original Image:")
+cv2_imshow(img)
+
+print("Sharpened Image (Gradient Masking):")
+cv2_imshow(sharpened)
