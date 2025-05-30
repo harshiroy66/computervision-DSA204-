@@ -1,0 +1,40 @@
+import cv2Add commentMore actions
+import numpy as np
+from google.colab.patches import cv2_imshow
+from google.colab import files
+
+# Upload two images (source and destination)
+print("Upload source image:")
+uploaded_src = files.upload()
+src_filename = next(iter(uploaded_src))
+src_img = cv2.imread(src_filename)
+
+print("Upload destination image:")
+uploaded_dst = files.upload()
+dst_filename = next(iter(uploaded_dst))
+dst_img = cv2.imread(dst_filename)
+
+# Manually define corresponding points in both images
+# These should be points that correspond to each other (at least 4 pairs)
+pts_src = np.array([[100, 100], [200, 100], [100, 200], [200, 200]], dtype=np.float32)
+pts_dst = np.array([[150, 150], [250, 150], [150, 250], [250, 250]], dtype=np.float32)
+
+# Calculate Homography matrix
+H, status = cv2.findHomography(pts_src, pts_dst)
+
+# Warp source image to destination plane using Homography matrix
+height, width = dst_img.shape[:2]
+warped_img = cv2.warpPerspective(src_img, H, (width, height))
+
+# Show images
+print("Source Image:")
+cv2_imshow(src_img)
+
+print("Destination Image:")
+cv2_imshow(dst_img)
+
+print("Warped Source Image using Homography:")
+cv2_imshow(warped_img)
+
+# Save output
+cv2.imwrite('warped_homography.jpg', warped_img)
