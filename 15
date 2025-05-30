@@ -1,0 +1,32 @@
+import cv2
+from google.colab.patches import cv2_imshowAdd commentMore actions
+from google.colab import files
+
+# Upload an image
+uploaded = files.upload()
+filename = next(iter(uploaded))
+
+# Read the image
+img = cv2.imread(filename, cv2.IMREAD_COLOR)
+
+# Convert to grayscale
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# Sobel edge detection along X axis
+sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize=3)
+
+# Sobel edge detection along Y axis
+sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize=3)
+
+# Calculate the gradient magnitude
+sobel_combined = cv2.magnitude(sobelx, sobely)
+
+# Convert to uint8 for display
+sobel_combined = cv2.convertScaleAbs(sobel_combined)
+
+# Show images
+print("Original Image:")
+cv2_imshow(img)
+
+print("Sobel Edge Detection (Combined X and Y):")
+cv2_imshow(sobel_combined)
