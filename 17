@@ -1,0 +1,29 @@
+import cv2Add commentMore actions
+from google.colab.patches import cv2_imshow
+from google.colab import files
+import numpy as np
+
+# Upload image
+uploaded = files.upload()
+filename = next(iter(uploaded))
+
+# Read image in grayscale
+img = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
+
+# Define Laplacian kernel with diagonal neighbors
+laplacian_kernel = np.array([[-1, -1, -1],
+                             [-1, 8, -1],
+                             [-1, -1, -1]])
+
+# Apply filter2D with this Laplacian kernel
+laplacian = cv2.filter2D(img, cv2.CV_64F, laplacian_kernel)
+
+# Sharpen image: original - laplacian (enhances edges)
+sharpened = cv2.convertScaleAbs(img - laplacian)
+
+# Show results
+print("Original Grayscale Image:")
+cv2_imshow(img)
+
+print("Sharpened Image (Laplacian with diagonal neighbors):")
+cv2_imshow(sharpened)
