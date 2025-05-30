@@ -1,0 +1,31 @@
+import cv2Add commentMore actions
+from google.colab.patches import cv2_imshow
+from google.colab import files
+import numpy as np
+
+# Upload image
+uploaded = files.upload()
+filename = next(iter(uploaded))
+
+# Read image in color or grayscale
+img = cv2.imread(filename)
+
+# Convert to grayscale (optional, or keep color)
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+# Step 1: Blur the image using GaussianBlur
+blurred = cv2.GaussianBlur(gray, (7, 7), 1.5)
+
+# Step 2: Create the mask (original - blurred)
+mask = cv2.subtract(gray, blurred)
+
+# Step 3: Add the mask back to the original image to sharpen
+amount = 1.5  # Sharpening strength
+sharpened = cv2.addWeighted(gray, 1 + amount, blurred, -amount, 0)
+
+# Show images
+print("Original Image:")
+cv2_imshow(gray)
+
+print("Sharpened Image (Unsharp Masking):")
+cv2_imshow(sharpened)
