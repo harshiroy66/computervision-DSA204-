@@ -1,0 +1,40 @@
+import cv2Add commentMore actions
+import numpy as np
+
+# Open video file or webcam (use 0 for webcam)
+cap = cv2.VideoCapture('input_video.mp4')  # Replace with 0 for webcam
+
+if not cap.isOpened():
+    print("Error opening video stream or file")
+    exit()
+
+# Define 4 source points (corners of the quadrilateral in the input frame)
+# You need to adjust these points based on your input video frame size
+pts1 = np.float32([[56, 65], [368, 52], [28, 387], [389, 390]])
+
+# Define 4 destination points (corners in the output frame)
+pts2 = np.float32([[0, 0], [300, 0], [0, 300], [300, 300]])
+
+# Compute the perspective transform matrix
+M = cv2.getPerspectiveTransform(pts1, pts2)
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    rows, cols = 300, 300  # Size of output warped frame
+
+    # Apply perspective warp on the current frame
+    warped_frame = cv2.warpPerspective(frame, M, (cols, rows))
+
+    # Show original and warped frame side by side
+    combined = cv2.hconcat([cv2.resize(frame, (cols, rows)), warped_frame])
+    cv2.imshow('Original and Perspective Transformed', combined)
+
+    # Quit on pressing 'q'
+    if cv2.waitKey(25) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
